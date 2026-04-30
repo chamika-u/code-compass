@@ -1,0 +1,16 @@
+E:\code-compass\src\main\java\com\hackathon\mcp\tools\GenerateGuideTool.java
+E:\code-compass\src\main\java\com\hackathon\mcp\model\RepositoryMetadata.java
+E:\code-compass\src\main\java\com\hackathon\mcp\model\MCPRequest.java
+E:\code-compass\src\main\java\com\hackathon\mcp\model\ToolDefinition.java
+E:\code-compass\src\main\java\com\hackathon\mcp\protocol\MCPRequestRouter.java
+E:\code-compass\src\main\java\com\hackathon\mcp\service\PromptTemplates.java
+E:\code-compass\src\main\java\com\hackathon\mcp\service\GitHubApiClient.java
+E:\code-compass\src\main\java\com\hackathon\mcp\tools\FetchRepoMetadataTool.java
+E:\code-compass\src\main\java\com\hackathon\mcp\protocol\MCPToolRegistry.java
+E:\code-compass\src\main\java\com\hackathon\mcp\service\DependencyParser.java
+E:\code-compass\src\main\java\com\hackathon\mcp\protocol\MCPProtocolHandler.java
+E:\code-compass\src\main\java\com\hackathon\mcp\tools\AnalyzeStructureTool.java
+E:\code-compass\src\main\java\com\hackathon\mcp\tools\MCPTool.java
+E:\code-compass\src\main\java\com\hackathon\mcp\model\MCPResponse.java
+E:\code-compass\src\main\java\com\hackathon\mcp\protocol\MCPServerInfo.java
+E:\code-compass\src\main\java\com\hackathon\mcp\service\WatsonXService.java

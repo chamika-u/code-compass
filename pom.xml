@@ -29,12 +29,14 @@
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- MCP Server feature - commented out as it's not in Maven Central
         <dependency>
             <groupId>io.openliberty.features</groupId>
             <artifactId>mcpServer-1.0</artifactId>
             <version>25.0.0.12-beta</version>
             <scope>provided</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>org.eclipse.microprofile</groupId>
             <artifactId>microprofile</artifactId>
@@ -54,17 +56,31 @@
             <artifactId>yasson</artifactId>
             <version>3.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.3</version>
+        </dependency>
 
-        <!-- IBM WatsonX SDK -->
+        <!-- IBM WatsonX SDK - commented out as artifacts not in Maven Central
+             For WatsonX integration, you'll need to add the SDK manually or use REST API
         <dependency>
             <groupId>com.ibm.watson</groupId>
-            <artifactId>ibm-watson</artifactId>
-            <version>11.1.1</version>
+            <artifactId>watson-developer-cloud</artifactId>
+            <version>9.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.ibm.cloud</groupId>
             <artifactId>sdk-core</artifactId>
             <version>9.18.5</version>
+        </dependency>
+        -->
+        
+        <!-- HTTP Client for API calls -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
 
         <!-- HTTP Client (Java 11+) -->
@@ -131,6 +147,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/repoonboarder/**</exclude>
+                        <exclude>**/MCPServerApplication.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <!-- Maven Surefire Plugin for Tests -->
