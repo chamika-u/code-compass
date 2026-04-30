@@ -6,7 +6,8 @@
         <feature>restfulWS-3.1</feature>
         <feature>cdi-4.0</feature>
         <feature>mpConfig-3.1</feature>
-        <feature>mcpServer-1.0</feature>
+        <feature>jsonb-3.0</feature>
+        <!-- mcpServer-1.0 feature not available in public Open Liberty -->
     </featureManager>
 
     <!-- HTTP Endpoint -->
