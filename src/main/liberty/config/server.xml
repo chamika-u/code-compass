@@ -3,19 +3,16 @@
 
     <!-- Enable features -->
     <featureManager>
-        <feature>jakartaee-10.0</feature>
-        <feature>microProfile-6.0</feature>
-        <feature>jsonb-3.0</feature>
-        <feature>jsonp-2.1</feature>
-        <feature>cdi-4.0</feature>
         <feature>restfulWS-3.1</feature>
-        <feature>restfulWSClient-3.1</feature>
+        <feature>cdi-4.0</feature>
+        <feature>mpConfig-3.1</feature>
+        <feature>mcpServer-1.0</feature>
     </featureManager>
 
     <!-- HTTP Endpoint -->
     <httpEndpoint id="defaultHttpEndpoint"
-                  httpPort="${http.port}"
-                  httpsPort="${https.port}"
+                  httpPort="9080"
+                  httpsPort="9443"
                   host="*" />
 
     <!-- Application Configuration -->
@@ -34,6 +31,11 @@
     <!-- Variable Defaults -->
     <variable name="http.port" defaultValue="9080"/>
     <variable name="https.port" defaultValue="9443"/>
+
+    <!-- WatsonX Configuration Variables -->
+    <variable name="watsonx.api.key" defaultValue="${env.WATSONX_API_KEY}"/>
+    <variable name="watsonx.project.id" defaultValue="${env.WATSONX_PROJECT_ID}"/>
+    <variable name="watsonx.url" defaultValue="${env.WATSONX_URL:https://us-south.ml.cloud.ibm.com}"/>
 
 </server>
 
