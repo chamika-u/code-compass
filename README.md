@@ -1,403 +1,365 @@
-# MCP GitHub Onboarding Server
+# 🚀 Repository Documentation Generator
 
-An agentic Model Context Protocol (MCP) server that generates comprehensive onboarding guides for GitHub repositories using IBM WatsonX Granite AI.
+An AI-powered web application that automatically generates comprehensive developer onboarding guides for any GitHub repository using IBM WatsonX AI and MCP (Model Context Protocol) servers.
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Open Liberty](https://img.shields.io/badge/Open%20Liberty-23.0-blue)
-![MCP](https://img.shields.io/badge/MCP-2024--11--05-green)
-![WatsonX](https://img.shields.io/badge/IBM%20WatsonX-Granite-purple)
-
-## 🎯 Overview
-
-This hackathon project provides an intelligent MCP server that:
-- Fetches GitHub repository metadata via REST API
-- Analyzes repository structure and dependencies
-- Generates AI-powered onboarding guides using IBM WatsonX Granite
-- Supports multiple guide types (comprehensive, quick-start, architecture, setup)
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    MCP Client                           │
-│              (Claude Desktop, etc.)                     │
-└────────────────────┬────────────────────────────────────┘
-                     │ stdio (JSON-RPC 2.0)
-┌────────────────────▼────────────────────────────────────┐
-│              Open Liberty Server                        │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │         MCP Protocol Handler                    │   │
-│  │  - Request routing                              │   │
-│  │  - Tool registry                                │   │
-│  │  - Response formatting                          │   │
-│  └─────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │              MCP Tools                          │   │
-│  │  ├─ fetch_repo_metadata                        │   │
-│  │  ├─ analyze_structure                          │   │
-│  │  └─ generate_guide                             │   │
-│  └─────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │            Service Layer                        │   │
-│  │  ├─ GitHubApiClient (Java HttpClient)         │   │
-│  │  ├─ WatsonXService (IBM SDK)                  │   │
-│  │  ├─ DependencyParser                          │   │
-│  │  └─ PromptTemplates                           │   │
-│  └─────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-                     │                    │
-         ┌───────────▼──────────┐  ┌─────▼──────────┐
-         │   GitHub REST API    │  │  IBM WatsonX   │
-         │                      │  │    Granite     │
-         └──────────────────────┘  └────────────────┘
-```
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
+![WatsonX](https://img.shields.io/badge/AI-WatsonX-purple.svg)
 
 ## ✨ Features
 
-### 🔧 Three Powerful Tools
+- 🤖 **AI-Powered Analysis** - Uses IBM WatsonX AI to intelligently analyze repositories
+- ⚡ **Fast Generation** - Creates comprehensive guides in seconds
+- 🎨 **Beautiful UI** - Modern, responsive web interface
+- 📚 **Complete Documentation** - Includes setup, architecture, testing, and contribution guidelines
+- 🔄 **Real-time Progress** - Live updates during documentation generation
+- 💾 **Download Support** - Export generated documentation as Markdown files
+- 🌐 **GitHub Integration** - Fetches repository metadata directly from GitHub API
+- 🛠️ **MCP Architecture** - Built on Model Context Protocol for extensibility
 
-1. **fetch_repo_metadata** - Retrieve comprehensive repository information
-   - Name, description, stars, language
-   - Topics, creation/update dates
-   - Language breakdown
+## 🎯 What It Generates
 
-2. **analyze_structure** - Deep repository analysis
-   - File tree with statistics
-   - README content extraction
-   - Dependency parsing (npm, Maven, pip, etc.)
-   - Key directory identification
+The tool creates comprehensive onboarding guides that include:
 
-3. **generate_guide** - AI-powered guide generation
-   - Comprehensive onboarding guides
-   - Quick-start guides
-   - Architecture analysis
-   - Setup instructions
+- **Project Overview** - Description, purpose, and key information
+- **Repository Metadata** - Stars, forks, languages, license, and statistics
+- **Getting Started** - Prerequisites, installation steps, and quick start
+- **Project Structure** - Directory organization and file distribution
+- **Technology Stack** - Languages, frameworks, and tools used
+- **Development Workflow** - Best practices and coding standards
+- **Key Features** - Main functionality and capabilities
+- **Testing Strategy** - How to run and write tests
+- **Contributing Guidelines** - Step-by-step contribution process
+- **Resources** - Links, documentation, and community channels
 
-### 🎨 Supported Package Managers
+## 📋 Prerequisites
 
-- **npm** (package.json)
-- **Maven** (pom.xml)
-- **Gradle** (build.gradle)
-- **pip** (requirements.txt)
-- **Cargo** (Cargo.toml)
-- **Go** (go.mod)
-- **Composer** (composer.json)
-- **Bundler** (Gemfile)
+Before you begin, ensure you have the following installed:
+
+- **Node.js** v16.0.0 or higher
+- **npm** v8.0.0 or higher
+- **Git** (for cloning the repository)
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Java 17 or higher
-- Maven 3.8+
-- IBM WatsonX API credentials
-- Git
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/mcp-github-onboarding.git
-cd mcp-github-onboarding
-```
-
-2. **Configure environment variables**
-
-Create a `.env` file or set environment variables:
+### 1. Clone the Repository
 
 ```bash
-export WATSONX_API_URL=https://us-south.ml.cloud.ibm.com
-export WATSONX_API_KEY=your_api_key_here
-export WATSONX_PROJECT_ID=your_project_id_here
+git clone https://github.com/your-username/repo-documentation-generator.git
+cd repo-documentation-generator
 ```
 
-3. **Build the project**
+### 2. Install Dependencies
+
 ```bash
-mvn clean install
+npm install
 ```
 
-4. **Run the server**
+### 3. Configure Environment Variables
+
+Copy the example environment file and configure your API keys:
+
 ```bash
-mvn liberty:run
+cp .env.example .env
 ```
 
-The server will start and listen for MCP requests on stdin/stdout.
+Edit `.env` and add your credentials:
 
-## 📖 Usage
+```env
+# Server Configuration
+PORT=3000
+NODE_ENV=development
 
-### Configuration
+# WatsonX AI Configuration
+WATSONX_API_KEY=your_watsonx_api_key_here
+WATSONX_PROJECT_ID=your_project_id_here
+WATSONX_URL=https://us-south.ml.cloud.ibm.com
 
-Edit `src/main/resources/application.properties`:
-
-```properties
-# GitHub API Configuration
-github.api.base.url=https://api.github.com
-github.api.timeout.seconds=30
-
-# WatsonX Configuration
-watsonx.api.url=${WATSONX_API_URL}
-watsonx.api.key=${WATSONX_API_KEY}
-watsonx.project.id=${WATSONX_PROJECT_ID}
-watsonx.model.id=ibm/granite-13b-chat-v2
-watsonx.max.tokens=2000
-watsonx.temperature=0.7
-
-# MCP Server Configuration
-mcp.server.name=github-onboarding-server
-mcp.server.version=1.0.0
-mcp.protocol.version=2024-11-05
+# GitHub API Configuration (Optional)
+GITHUB_TOKEN=your_github_token_here
 ```
 
-### MCP Client Configuration
+#### Getting API Keys:
 
-Add to your MCP client configuration (e.g., Claude Desktop):
+**WatsonX API Key:**
+1. Go to [IBM Cloud](https://cloud.ibm.com/)
+2. Create an account or sign in
+3. Navigate to Watson Machine Learning service
+4. Create a new instance
+5. Generate API key from service credentials
+6. Create a project and copy the project ID
 
+**GitHub Token (Optional but Recommended):**
+1. Go to [GitHub Settings > Tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Select scopes: `public_repo` (for public repositories)
+4. Generate and copy the token
+
+> **Note:** The application works without API keys but uses template-based generation instead of AI-powered analysis.
+
+### 4. Start the Server
+
+```bash
+# Production mode
+npm start
+
+# Development mode (with auto-reload)
+npm run dev
+```
+
+### 5. Open in Browser
+
+Navigate to: **http://localhost:3000**
+
+## 🎮 How to Use
+
+1. **Open the Application** - Go to http://localhost:3000 in your browser
+2. **Enter Repository URL** - Paste any GitHub repository URL (e.g., `https://github.com/expressjs/express`)
+3. **Click Generate** - The AI will analyze the repository and generate documentation
+4. **View Results** - Review the generated onboarding guide in the preview
+5. **Download** - Click "Download Markdown" to save the documentation
+
+### Example Repositories to Try:
+
+- `https://github.com/expressjs/express` - Express.js web framework
+- `https://github.com/facebook/react` - React JavaScript library
+- `https://github.com/nodejs/node` - Node.js runtime
+- `https://github.com/microsoft/vscode` - Visual Studio Code
+
+## 🏗️ Project Structure
+
+```
+repo-documentation-generator/
+├── public/                 # Frontend files
+│   └── index.html         # Main UI (HTML + CSS + JavaScript)
+├── docs/                  # Generated documentation examples
+│   ├── EXPRESS_JS_ONBOARDING_GUIDE.md
+│   └── HELA_BOJUN_ONBOARDING_GUIDE.md
+├── server.js              # Express.js backend server
+├── package.json           # Node.js dependencies
+├── .env.example          # Environment variables template
+├── .gitignore            # Git ignore rules
+└── README.md             # This file
+```
+
+## 🔧 API Endpoints
+
+### `GET /`
+Serves the main web interface
+
+### `GET /api/health`
+Health check endpoint
+
+**Response:**
 ```json
 {
-  "mcpServers": {
-    "github-onboarding": {
-      "command": "java",
-      "args": [
-        "-jar",
-        "target/mcp-github-onboarding.war"
-      ],
-      "env": {
-        "WATSONX_API_URL": "https://us-south.ml.cloud.ibm.com",
-        "WATSONX_API_KEY": "your_api_key",
-        "WATSONX_PROJECT_ID": "your_project_id"
-      }
-    }
+  "status": "healthy",
+  "timestamp": "2026-04-30T23:00:00.000Z",
+  "watsonxConfigured": true
+}
+```
+
+### `POST /api/generate-documentation`
+Generates documentation for a GitHub repository
+
+**Request:**
+```json
+{
+  "repoUrl": "https://github.com/owner/repo"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "repoName": "repo",
+  "markdown": "# Repository Documentation...",
+  "metadata": {
+    "name": "repo",
+    "description": "Repository description",
+    "stars": 1000,
+    "language": "JavaScript"
   }
 }
 ```
 
-### Example Requests
+## 🤖 How It Works
 
-#### 1. Fetch Repository Metadata
+### Architecture Flow:
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "1",
-  "method": "tools/call",
-  "params": {
-    "name": "fetch_repo_metadata",
-    "arguments": {
-      "repository_url": "https://github.com/facebook/react"
-    }
-  }
-}
-```
+1. **User Input** → User pastes GitHub repository URL in the web UI
+2. **Metadata Fetch** → Server fetches repository data from GitHub API
+3. **Structure Analysis** → Analyzes file structure, languages, and patterns
+4. **AI Generation** → WatsonX AI generates comprehensive documentation
+5. **Response** → Markdown documentation returned to frontend
+6. **Display** → UI renders the documentation with preview and download options
 
-#### 2. Analyze Repository Structure
+### Technology Stack:
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "2",
-  "method": "tools/call",
-  "params": {
-    "name": "analyze_structure",
-    "arguments": {
-      "repository_url": "https://github.com/expressjs/express",
-      "branch": "master"
-    }
-  }
-}
-```
+**Frontend:**
+- HTML5, CSS3, JavaScript (Vanilla)
+- Responsive design with modern UI/UX
+- Real-time progress indicators
 
-#### 3. Generate Onboarding Guide
+**Backend:**
+- Node.js with Express.js
+- Axios for HTTP requests
+- CORS enabled for API access
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "3",
-  "method": "tools/call",
-  "params": {
-    "name": "generate_guide",
-    "arguments": {
-      "repository_url": "https://github.com/vercel/next.js",
-      "guide_type": "comprehensive"
-    }
-  }
-}
-```
+**AI & APIs:**
+- IBM WatsonX AI (Granite models)
+- GitHub REST API v3
+- Model Context Protocol (MCP)
 
 ## 🧪 Testing
 
-### Run Unit Tests
+Currently, the application includes manual testing. To test:
+
+1. Start the server: `npm start`
+2. Open http://localhost:3000
+3. Try generating documentation for various repositories
+4. Verify the output quality and completeness
+
+## 🚢 Deployment
+
+### Deploy to Heroku
 
 ```bash
-mvn test
+# Login to Heroku
+heroku login
+
+# Create app
+heroku create your-app-name
+
+# Set environment variables
+heroku config:set WATSONX_API_KEY=your_key
+heroku config:set WATSONX_PROJECT_ID=your_project_id
+heroku config:set GITHUB_TOKEN=your_token
+
+# Deploy
+git push heroku main
+
+# Open app
+heroku open
 ```
 
-### Run Integration Tests
+### Deploy to Vercel
 
 ```bash
-mvn verify
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
 ```
 
-### Test Coverage
+### Deploy to AWS/DigitalOcean/Google Cloud
 
-```bash
-mvn jacoco:report
-```
+1. Set up a Node.js environment
+2. Clone the repository
+3. Install dependencies: `npm install`
+4. Set environment variables
+5. Start with PM2: `pm2 start server.js`
+6. Configure reverse proxy (Nginx/Apache)
 
-View coverage report at `target/site/jacoco/index.html`
+## 🔒 Security Considerations
 
-## 📁 Project Structure
-
-```
-mcp-github-onboarding/
-├── src/
-│   ├── main/
-│   │   ├── java/com/hackathon/mcp/
-│   │   │   ├── MCPServerApplication.java
-│   │   │   ├── model/
-│   │   │   │   ├── MCPRequest.java
-│   │   │   │   ├── MCPResponse.java
-│   │   │   │   ├── ToolDefinition.java
-│   │   │   │   └── RepositoryMetadata.java
-│   │   │   ├── protocol/
-│   │   │   │   ├── MCPProtocolHandler.java
-│   │   │   │   ├── MCPRequestRouter.java
-│   │   │   │   ├── MCPServerInfo.java
-│   │   │   │   └── MCPToolRegistry.java
-│   │   │   ├── service/
-│   │   │   │   ├── GitHubApiClient.java
-│   │   │   │   ├── WatsonXService.java
-│   │   │   │   ├── DependencyParser.java
-│   │   │   │   └── PromptTemplates.java
-│   │   │   └── tools/
-│   │   │       ├── MCPTool.java
-│   │   │       ├── FetchRepoMetadataTool.java
-│   │   │       ├── AnalyzeStructureTool.java
-│   │   │       └── GenerateGuideTool.java
-│   │   ├── liberty/config/
-│   │   │   └── server.xml
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── logback.xml
-│   └── test/
-│       └── java/com/hackathon/mcp/
-│           ├── service/
-│           │   └── DependencyParserTest.java
-│           ├── protocol/
-│           │   └── MCPRequestRouterTest.java
-│           └── integration/
-│               └── MCPServerIntegrationTest.java
-├── docs/
-│   └── API_DOCUMENTATION.md
-├── pom.xml
-└── README.md
-```
-
-## 🔍 API Documentation
-
-See [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) for detailed API documentation.
-
-## 🛠️ Development
-
-### Build Commands
-
-```bash
-# Clean build
-mvn clean install
-
-# Run in dev mode
-mvn liberty:dev
-
-# Package WAR
-mvn package
-
-# Run tests
-mvn test
-
-# Generate documentation
-mvn javadoc:javadoc
-```
-
-### Logging
-
-Logs are written to:
-- Console: `INFO` level
-- File: `logs/mcp-server.log` (all levels)
-- Error file: `logs/mcp-server-error.log` (errors only)
-
-Configure logging in `src/main/resources/logback.xml`
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Issue: WatsonX API authentication fails**
-```
-Solution: Verify WATSONX_API_KEY and WATSONX_PROJECT_ID are set correctly
-```
-
-**Issue: GitHub API rate limit exceeded**
-```
-Solution: Add GitHub personal access token for higher rate limits
-```
-
-**Issue: Port 9080 already in use**
-```
-Solution: Change port in server.xml or stop conflicting service
-```
-
-**Issue: JSON parsing errors**
-```
-Solution: Ensure repository URL format is correct (owner/repo or full URL)
-```
-
-## 📊 Performance
-
-- **GitHub API**: ~500ms per request
-- **WatsonX Generation**: 5-15 seconds (depends on guide complexity)
-- **Memory**: ~512MB heap recommended
-- **Concurrent Requests**: Supports multiple simultaneous tool calls
-
-## 🔐 Security
-
-- API keys stored in environment variables
-- No credentials in source code
-- HTTPS for all external API calls
-- Input validation on all tool parameters
+- **API Keys** - Never commit `.env` file to version control
+- **Rate Limiting** - GitHub API has rate limits (60 requests/hour without token, 5000 with token)
+- **Input Validation** - Server validates all repository URLs
+- **CORS** - Configured for security
+- **HTTPS** - Use HTTPS in production
 
 ## 🤝 Contributing
 
-This is a hackathon project. Contributions welcome!
+Contributions are welcome! Here's how you can help:
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+1. **Fork the Repository**
+2. **Create a Feature Branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit Changes** (`git commit -m 'Add amazing feature'`)
+4. **Push to Branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
 
-## 📄 License
+### Development Guidelines:
 
-MIT License - see LICENSE file for details
+- Follow existing code style
+- Add comments for complex logic
+- Test thoroughly before submitting PR
+- Update documentation as needed
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
-- **Open Liberty** - Java application server
-- **IBM WatsonX** - AI/ML platform
-- **GitHub REST API** - Repository data
-- **Model Context Protocol** - MCP specification
+- **IBM WatsonX** - For providing powerful AI capabilities
+- **GitHub** - For the comprehensive API
+- **Express.js** - For the robust web framework
+- **Open Source Community** - For inspiration and support
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/mcp-github-onboarding/issues)
-- **Documentation**: [docs/](docs/)
-- **Email**: your.email@example.com
+### Getting Help:
 
-## 🎉 Hackathon Info
+- **Issues** - Report bugs or request features via GitHub Issues
+- **Documentation** - Check this README and code comments
+- **Community** - Join discussions in GitHub Discussions
 
-**Event**: [Hackathon Name]  
-**Date**: April 2026  
-**Team**: [Your Team Name]  
-**Category**: AI/Developer Tools
+### Common Issues:
+
+**Issue: "Failed to generate documentation"**
+- Check your WatsonX API key is valid
+- Verify the repository URL is correct
+- Ensure you have internet connectivity
+
+**Issue: "GitHub rate limit exceeded"**
+- Add a GitHub personal access token to `.env`
+- Wait for rate limit to reset (1 hour)
+
+**Issue: "Port already in use"**
+- Change PORT in `.env` file
+- Kill process using the port: `lsof -ti:3000 | xargs kill` (Mac/Linux)
+
+## 🗺️ Roadmap
+
+### Planned Features:
+
+- [ ] Support for private repositories
+- [ ] Multiple AI model options
+- [ ] Customizable documentation templates
+- [ ] Batch processing for multiple repositories
+- [ ] API key management UI
+- [ ] Documentation versioning
+- [ ] Export to PDF/HTML formats
+- [ ] Integration with CI/CD pipelines
+- [ ] Multi-language support
+- [ ] Advanced analytics and insights
+
+## 📊 Statistics
+
+- **Lines of Code:** ~1,200
+- **Dependencies:** 4 production, 1 development
+- **Supported Languages:** All GitHub-supported languages
+- **Average Generation Time:** 3-5 seconds
 
 ---
 
-Built with ❤️ using Open Liberty, Java, and IBM WatsonX Granite
+## 🎉 Get Started Now!
+
+```bash
+git clone https://github.com/your-username/repo-documentation-generator.git
+cd repo-documentation-generator
+npm install
+cp .env.example .env
+# Add your API keys to .env
+npm start
+# Open http://localhost:3000
+```
+
+**Happy Documenting! 📚✨**
+
+---
+
+*Built with ❤️ using IBM WatsonX AI, Node.js, and Modern Web Technologies*
