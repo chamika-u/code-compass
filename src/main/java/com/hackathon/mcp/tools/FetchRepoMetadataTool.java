@@ -68,22 +68,21 @@ public class FetchRepoMetadataTool implements MCPTool {
             // Fetch languages
             String languagesJson = githubClient.getLanguages(owner, repo);
             
-            // Build response
-            Map<String, Object> result = Map.of(
-                "name", metadata.getName(),
-                "full_name", metadata.getFullName(),
-                "description", metadata.getDescription() != null ? metadata.getDescription() : "No description available",
-                "url", metadata.getHtmlUrl(),
-                "language", metadata.getLanguage() != null ? metadata.getLanguage() : "Not specified",
-                "stars", metadata.getStars(),
-                "forks", metadata.getForks(),
-                "open_issues", metadata.getOpenIssues(),
-                "default_branch", metadata.getDefaultBranch(),
-                "topics", metadata.getTopics() != null ? metadata.getTopics() : new String[0],
-                "created_at", metadata.getCreatedAt(),
-                "updated_at", metadata.getUpdatedAt(),
-                "languages", languagesJson
-            );
+            // Build response using HashMap (Map.of() has a 10 entry limit)
+            Map<String, Object> result = new HashMap<>();
+            result.put("name", metadata.getName());
+            result.put("full_name", metadata.getFullName());
+            result.put("description", metadata.getDescription() != null ? metadata.getDescription() : "No description available");
+            result.put("url", metadata.getHtmlUrl());
+            result.put("language", metadata.getLanguage() != null ? metadata.getLanguage() : "Not specified");
+            result.put("stars", metadata.getStars());
+            result.put("forks", metadata.getForks());
+            result.put("open_issues", metadata.getOpenIssues());
+            result.put("default_branch", metadata.getDefaultBranch());
+            result.put("topics", metadata.getTopics() != null ? metadata.getTopics() : new String[0]);
+            result.put("created_at", metadata.getCreatedAt());
+            result.put("updated_at", metadata.getUpdatedAt());
+            result.put("languages", languagesJson);
             
             String resultJson = jsonb.toJson(result);
             logger.info("Successfully fetched metadata for {}/{}", owner, repo);
