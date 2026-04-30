@@ -1,10 +1,12 @@
 com\hackathon\mcp\model\MCPResponse.class
+com\hackathon\mcp\tools\FetchRepoMetadataTool.class
 com\hackathon\mcp\tools\GenerateGuideTool.class
 com\hackathon\mcp\protocol\MCPRequestRouter.class
 com\hackathon\mcp\service\GitHubApiClient.class
 com\hackathon\mcp\protocol\MCPServerInfo.class
 com\hackathon\mcp\service\DependencyParser.class
 com\hackathon\mcp\tools\MCPTool.class
+com\hackathon\mcp\protocol\MCPProtocolHandler.class
 com\hackathon\mcp\tools\AnalyzeStructureTool.class
 com\hackathon\mcp\model\ToolDefinition.class
 com\hackathon\mcp\model\MCPRequest.class
