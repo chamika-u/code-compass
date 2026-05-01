@@ -343,16 +343,36 @@
                 </p>
 
                 <div class="input-group">
-                    <input 
-                        type="text" 
-                        id="repoUrl" 
-                        class="input-field" 
+                    <input
+                        type="text"
+                        id="repoUrl"
+                        class="input-field"
                         placeholder="https://github.com/username/repository"
                         value=""
                     >
                     <button id="generateBtn" class="btn btn-primary" onclick="generateDocumentation()">
                         Generate Documentation
                     </button>
+                </div>
+
+                <div class="input-group" style="margin-top: 15px;">
+                    <input
+                        type="password"
+                        id="githubToken"
+                        class="input-field"
+                        placeholder="GitHub Token (optional - for private repos & higher rate limits)"
+                        value=""
+                    >
+                    <button class="btn" style="background: #6c757d; color: white; min-width: 120px;" onclick="toggleTokenVisibility()">
+                        👁️ Show
+                    </button>
+                </div>
+                
+                <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+                    <small style="color: #856404;">
+                        <strong>🔒 Privacy Note:</strong> Your token is only used for this request and is never stored on our servers.
+                        <a href="#" onclick="showTokenHelp(); return false;" style="color: #667eea; text-decoration: underline;">Need a token?</a>
+                    </small>
                 </div>
 
                 <div class="example-repos">
@@ -422,8 +442,40 @@
             return false;
         }
 
+        function toggleTokenVisibility() {
+            const tokenInput = document.getElementById('githubToken');
+            const btn = event.target;
+            if (tokenInput.type === 'password') {
+                tokenInput.type = 'text';
+                btn.textContent = '🙈 Hide';
+            } else {
+                tokenInput.type = 'password';
+                btn.textContent = '👁️ Show';
+            }
+        }
+
+        function showTokenHelp() {
+            const helpText = `
+📖 How to Get a GitHub Token for Private Repositories:
+
+1. Go to: https://github.com/settings/tokens
+2. Click "Generate new token" → "Generate new token (classic)"
+3. Give it a name (e.g., "Repo Documentation Generator")
+4. Select scope: ✅ repo (Full control of private repositories)
+5. Click "Generate token"
+6. Copy the token (starts with ghp_)
+7. Paste it in the token field above
+
+🔒 Security: Your token is only used for this request and never stored.
+
+For detailed instructions, see the documentation guide.
+            `;
+            alert(helpText);
+        }
+
         async function generateDocumentation() {
             const repoUrl = document.getElementById('repoUrl').value.trim();
+            const githubToken = document.getElementById('githubToken').value.trim();
             
             if (!repoUrl) {
                 showStatus('error', '❌ Please enter a GitHub repository URL');
@@ -456,17 +508,23 @@
                 // Step 3: Generate with WatsonX
                 await simulateProgress('🤖 Generating documentation with WatsonX AI...', 80);
 
-                // Make API call to backend
+                // Make API call to backend with optional token
+                const requestBody = { repoUrl };
+                if (githubToken) {
+                    requestBody.githubToken = githubToken;
+                }
+
                 const response = await fetch('/api/generate-documentation', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ repoUrl })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to generate documentation');
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to generate documentation');
                 }
 
                 const data = await response.json();
@@ -482,7 +540,7 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                showStatus('error', '❌ Failed to generate documentation. Please try again.');
+                showStatus('error', `❌ ${error.message}`);
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Generate Documentation';

@@ -23,7 +23,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 /**
  * Fetch repository metadata from GitHub
  */
-async function fetchRepoMetadata(repoUrl) {
+async function fetchRepoMetadata(repoUrl, customToken = null) {
     try {
         // Extract owner and repo from URL
         const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
@@ -34,8 +34,9 @@ async function fetchRepoMetadata(repoUrl) {
         const [, owner, repo] = match;
         const cleanRepo = repo.replace('.git', '');
 
-        // Fetch repository data
-        const headers = GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {};
+        // Use custom token if provided, otherwise fall back to env token
+        const token = customToken || GITHUB_TOKEN;
+        const headers = token ? { Authorization: `token ${token}` } : {};
         
         const [repoData, languagesData, readmeData] = await Promise.all([
             axios.get(`https://api.github.com/repos/${owner}/${cleanRepo}`, { headers }),
@@ -76,9 +77,10 @@ async function fetchRepoMetadata(repoUrl) {
 /**
  * Analyze repository structure
  */
-async function analyzeRepoStructure(owner, repo) {
+async function analyzeRepoStructure(owner, repo, customToken = null) {
     try {
-        const headers = GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {};
+        const token = customToken || GITHUB_TOKEN;
+        const headers = token ? { Authorization: `token ${token}` } : {};
         
         // Fetch repository tree
         const treeData = await axios.get(
@@ -142,6 +144,31 @@ async function analyzeRepoStructure(owner, repo) {
 }
 
 /**
+ * Get IAM token from IBM Cloud
+ */
+async function getIAMToken(apiKey) {
+    try {
+        const response = await axios.post(
+            'https://iam.cloud.ibm.com/identity/token',
+            new URLSearchParams({
+                'grant_type': 'urn:ibm:params:oauth:grant-type:apikey',
+                'apikey': apiKey
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                }
+            }
+        );
+        return response.data.access_token;
+    } catch (error) {
+        console.error('Error getting IAM token:', error.message);
+        throw error;
+    }
+}
+
+/**
  * Generate documentation using WatsonX AI
  */
 async function generateWithWatsonX(metadata, structure) {
@@ -185,22 +212,29 @@ Make it comprehensive, well-structured, and developer-friendly.`;
             return generateTemplateDocumentation(metadata, structure);
         }
 
+        // Get IAM token first
+        console.log('Getting IAM token for WatsonX...');
+        const iamToken = await getIAMToken(WATSONX_API_KEY);
+        console.log('IAM token obtained successfully');
+
+        // Use text generation with deployment space
         const response = await axios.post(
             `${WATSONX_URL}/ml/v1/text/generation?version=2023-05-29`,
             {
                 input: prompt,
-                model_id: 'ibm/granite-13b-chat-v2',
+                model_id: 'ibm/granite-3-8b-instruct',
                 project_id: WATSONX_PROJECT_ID,
                 parameters: {
+                    decoding_method: "greedy",
                     max_new_tokens: 4000,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    top_k: 50
+                    min_new_tokens: 0,
+                    stop_sequences: [],
+                    repetition_penalty: 1
                 }
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${WATSONX_API_KEY}`,
+                    'Authorization': `Bearer ${iamToken}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
@@ -210,6 +244,9 @@ Make it comprehensive, well-structured, and developer-friendly.`;
         return response.data.results[0].generated_text;
     } catch (error) {
         console.error('Error calling WatsonX:', error.message);
+        if (error.response) {
+            console.error('WatsonX API response:', error.response.status, error.response.data);
+        }
         console.log('Falling back to template generation');
         return generateTemplateDocumentation(metadata, structure);
     }
@@ -484,20 +521,23 @@ app.get('/api/health', (req, res) => {
  */
 app.post('/api/generate-documentation', async (req, res) => {
     try {
-        const { repoUrl } = req.body;
+        const { repoUrl, githubToken } = req.body;
 
         if (!repoUrl) {
             return res.status(400).json({ error: 'Repository URL is required' });
         }
 
         console.log(`Generating documentation for: ${repoUrl}`);
+        if (githubToken) {
+            console.log('Using custom GitHub token from request');
+        }
 
         // Step 1: Fetch repository metadata
-        const metadata = await fetchRepoMetadata(repoUrl);
+        const metadata = await fetchRepoMetadata(repoUrl, githubToken);
         console.log(`Fetched metadata for ${metadata.fullName}`);
 
         // Step 2: Analyze repository structure
-        const structure = await analyzeRepoStructure(metadata.owner, metadata.repo);
+        const structure = await analyzeRepoStructure(metadata.owner, metadata.repo, githubToken);
         console.log(`Analyzed structure: ${structure.totalFiles} files`);
 
         // Step 3: Generate documentation with WatsonX
@@ -518,9 +558,9 @@ app.post('/api/generate-documentation', async (req, res) => {
 
     } catch (error) {
         console.error('Error generating documentation:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Failed to generate documentation',
-            message: error.message 
+            message: error.message
         });
     }
 });
